@@ -134,7 +134,7 @@ public class CourseCombinedInfoFragment extends BaseFragment implements RefreshL
                 }
             }
 
-            if (environment.getConfig().isNotificationEnabled()
+            if (environment.getConfig().arePushNotificationEnabled()
                     && courseData != null && courseData.getCourse() != null) {
                 notificationSettingRow.setVisibility(View.VISIBLE);
                 final String courseId = courseData.getCourse().getId();

@@ -121,7 +121,7 @@ public abstract class MainApplication extends MultiDexApplication {
         }
 
         // Add Firebase as an analytics provider if enabled in the config
-        if (config.isFirebaseEnabled())  {
+        if (config.getFirebaseConfig().isEnabled())  {
             analyticsRegistry.addAnalyticsProvider(injector.getInstance(FirebaseAnalytics.class));
         }
 

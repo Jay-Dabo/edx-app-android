@@ -135,6 +135,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-ads:15.0.1"
     // Google Firebase
     implementation "com.google.firebase:firebase-core:16.0.1"
+    implementation "com.google.firebase:firebase-messaging:16.0.1"
 
     implementation 'com.facebook.android:facebook-android-sdk:3.23.1'
     implementation 'com.google.code.gson:gson:2.7'
@@ -233,7 +234,9 @@ configurations {
 def config = new TaskHelper().loadConfig(project)
 
 // https://developers.google.com/android/guides/google-services-plugin
-if (config.get('FIREBASE_ENABLED')?: false) {
+def firebase = config.get('FIREBASE')
+def firebaseEnabled = firebase?.get('ENABLED')
+if (firebaseEnabled?: false) {
     apply plugin: 'com.google.gms.google-services'
 }
 
@@ -332,7 +335,7 @@ android {
         }
 
         manifestPlaceholders = [supportsRtl:"false",
-                                firebaseEnabled: config.get('FIREBASE_ENABLED')?: false,
+                                firebaseEnabled: firebaseEnabled?: false,
                                 branchKey: branchKey]
 
         javaCompileOptions {
