@@ -297,13 +297,15 @@
 
         <!-- Notifications through Firebase Cloud Messaging (FCM) -->
         <service
-            android:name="org.edx.mobile.notifications.services.NotificationService">
+            android:name="org.edx.mobile.notifications.services.NotificationService"
+            android:enabled="${firebaseEnabled}">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name="org.edx.mobile.notifications.services.EdxFirebaseInstanceIdService">
+            android:name="org.edx.mobile.notifications.services.EdxFirebaseInstanceIdService"
+            android:enabled="${firebaseEnabled}">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

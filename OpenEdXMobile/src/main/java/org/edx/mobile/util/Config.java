@@ -410,15 +410,22 @@ public class Config {
         @SerializedName("ENABLED")
         private boolean mEnabled;
 
-        @SerializedName("PUSH_NOTIFICATIONS")
-        private boolean mPushNotifications;
+        @SerializedName("ANALYTICS_ENABLED")
+        private boolean mAnalyticsEnabled;
 
-        public boolean isEnabled(){
+        @SerializedName("CLOUD_MESSAGING_ENABLED")
+        private boolean mCloudMessagingEnabled;
+
+        public boolean isEnabled() {
             return mEnabled;
         }
 
-        public boolean areNotificationsEnabled(){
-            return mEnabled && mPushNotifications;
+        public boolean isAnalyticsEnabled() {
+            return mEnabled && mAnalyticsEnabled;
+        }
+
+        public boolean areNotificationsEnabled() {
+            return mEnabled && mCloudMessagingEnabled;
         }
     }
 
@@ -530,7 +537,11 @@ public class Config {
         return getString(ORGANIZATION_CODE);
     }
 
-    public boolean arePushNotificationEnabled() {
+    public boolean areFirebasePushNotificationsEnabled() {
+        return getFirebaseConfig().areNotificationsEnabled() && arePushNotificationEnabled();
+    }
+
+    private boolean arePushNotificationEnabled() {
         return getBoolean(PUSH_NOTIFICATIONS_FLAG, false);
     }
 
@@ -641,7 +652,7 @@ public class Config {
     }
 
     @NonNull
-    public FirebaseConfig getFirebaseConfig(){
+    public FirebaseConfig getFirebaseConfig() {
         return getObjectOrNewInstance(FIREBASE, FirebaseConfig.class);
     }
 

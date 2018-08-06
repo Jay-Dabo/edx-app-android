@@ -1,19 +1,16 @@
 package org.edx.mobile.notifications.services;
-import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.firebase.iid.FirebaseInstanceId;
-import android.util.Log;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import org.edx.mobile.logger.Logger;
 
-public class EdxFirebaseInstanceIdService extends FirebaseInstanceIdService {
-    protected static final Logger logger = new Logger(NotificationService.class.getName());
-
+public class EdxFirebaseInstanceIdService extends FirebaseMessagingService {
+    protected static final Logger logger = new Logger(EdxFirebaseInstanceIdService.class.getName());
 
     @Override
-    public void onTokenRefresh() {
-        // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        logger.debug("Refreshed token: " + refreshedToken);
+    public void onNewToken(String s) {
+        logger.debug("Refreshed FCM token: " + s);
+        super.onNewToken(s);
     }
 
 }

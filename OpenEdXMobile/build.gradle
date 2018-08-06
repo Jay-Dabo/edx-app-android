@@ -28,6 +28,7 @@ edx {
 apply plugin: 'com.android.application'
 apply plugin: 'newrelic'
 apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'com.google.gms.google-services'
 apply from: 'jacoco.gradle'
 
 class AndroidHelper {
@@ -135,7 +136,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-ads:15.0.1"
     // Google Firebase
     implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-messaging:16.0.1"
+    implementation "com.google.firebase:firebase-messaging:17.1.0"
 
     implementation 'com.facebook.android:facebook-android-sdk:3.23.1'
     implementation 'com.google.code.gson:gson:2.7'
@@ -232,13 +233,8 @@ configurations {
 }
 
 def config = new TaskHelper().loadConfig(project)
-
-// https://developers.google.com/android/guides/google-services-plugin
 def firebase = config.get('FIREBASE')
 def firebaseEnabled = firebase?.get('ENABLED')
-if (firebaseEnabled?: false) {
-    apply plugin: 'com.google.gms.google-services'
-}
 
 android {
     signingConfigs {

@@ -1,13 +1,14 @@
 package org.edx.mobile.notifications.services;
 
-import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import org.edx.mobile.logger.Logger;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -15,25 +16,30 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.edx.mobile.R;
 import org.edx.mobile.base.MainApplication;
 import org.edx.mobile.core.IEdxEnvironment;
-import org.edx.mobile.view.DiscoveryLaunchActivity;
+import org.edx.mobile.logger.Logger;
 import org.edx.mobile.view.SplashActivity;
 
 
 public class NotificationService extends FirebaseMessagingService {
     public static final String NOTIFICATION_TOPIC_RELEASE = "edx_release_notification_android";
+    public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "edx_notification_channel";
+
     private static final int NOTIFICATION_ID = 999;
     protected static final Logger logger = new Logger(NotificationService.class.getName());
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        IEdxEnvironment environment = MainApplication.getEnvironment(this);
+    public void onSendError(String s, Exception e) {
+        super.onSendError(s, e);
+    }
 
-        if(!environment.getConfig().getFirebaseConfig().areNotificationsEnabled()){
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        final IEdxEnvironment environment = MainApplication.getEnvironment(this);
+
+        if (!environment.getConfig().areFirebasePushNotificationsEnabled()) {
             // Do not process Notifications when they are disabled.
             return;
         }
-
-        super.onMessageReceived(remoteMessage);
 
         if (remoteMessage.getNotification() != null) {
             logger.debug(
@@ -41,42 +47,59 @@ public class NotificationService extends FirebaseMessagingService {
             );
         }
 
-        // Build out the Notification and set the intent to direct the user to the application
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(remoteMessage.getNotification().getTitle())
-                        .setContentText(remoteMessage.getNotification().getBody());
-        Intent resultIntent = new Intent(this, SplashActivity.class);
+        // Send the message upstream to generate a system notification
+        sendNotification(
+                remoteMessage.getNotification().getTitle(),
+                remoteMessage.getNotification().getBody()
+        );
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(DiscoveryLaunchActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        builder.setContentIntent(resultPendingIntent);
-        NotificationManager notificationManager =
+    }
+
+    /**
+     * Create and show a simple notification containing the message data.
+     */
+    private void sendNotification(String title, String messageBody) {
+        final Intent intent = new Intent(this, SplashActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0 /* Request code */,
+                intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        final Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        // Build out the Notification and set the intent to direct the user to the application
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, DEFAULT_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(title)
+                        .setContentText(messageBody)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+        final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // NotificationId is a unique integer your app uses to identify the
-        // notification. For example, to cancel the notification, you can pass its ID
-        // number to NotificationManager.cancel(). We are currently using a hard coded
-        // id, this could be improved in the future if we have Notification IDs added.
-        Notification notification = builder.build();
-        if(notification != null){
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final NotificationChannel channel = new NotificationChannel(
+                    DEFAULT_NOTIFICATION_CHANNEL_ID,
+                    getResources().getString(R.string.default_notification_channel_title),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
             try {
-                notificationManager.notify(NOTIFICATION_ID, notification);
-            } catch (NullPointerException ex){
+                notificationManager.createNotificationChannel(channel);
+            } catch (NullPointerException ex) {
                 logger.error(ex);
+                return;
             }
         }
-
-
-
+        try {
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        } catch (NullPointerException ex) {
+            logger.error(ex);
+            return;
+        }
     }
 }

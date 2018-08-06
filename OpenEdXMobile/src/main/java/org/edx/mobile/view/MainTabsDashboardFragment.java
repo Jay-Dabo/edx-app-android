@@ -64,9 +64,7 @@ public class MainTabsDashboardFragment extends TabsBaseFragment {
         final boolean isUserProfileEnabled = environment.getConfig().isUserProfilesEnabled();
         if (isUserProfileEnabled) {
             profile = loginPrefs.getCurrentUserProfile();
-            if (profile != null) {
-                sendGetUpdatedAccountCall();
-            }
+            sendGetUpdatedAccountCall();
         }
         if (!isUserProfileEnabled) {
             toolbarCallbacks.getProfileView().setVisibility(View.GONE);
