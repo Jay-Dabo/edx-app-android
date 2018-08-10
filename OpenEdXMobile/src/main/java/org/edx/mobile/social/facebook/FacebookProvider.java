@@ -1,13 +1,7 @@
 package org.edx.mobile.social.facebook;
 
 import android.content.Context;
-import android.os.Bundle;
 
-import com.facebook.FacebookRequestError;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
 import com.google.inject.Singleton;
 
 import org.edx.mobile.logger.Logger;
@@ -31,22 +25,23 @@ public class FacebookProvider implements SocialProvider {
         return false;
     }
 
-    /**
-     * returns true if there was an error. The callback will be notified
-     */
-    private boolean notifyIfError(Response response, Callback callback) {
-        if (response.getError() != null) {
-            FacebookRequestError error = response.getError();
-            callback.onError(new SocialError(error.getException()));
-            return true;
-        }
-        return false;
-    }
+//    /**
+//     * returns true if there was an error. The callback will be notified
+//     */
+//    private boolean notifyIfError(Response response, Callback callback) {
+//        if (response.getError() != null) {
+//            FacebookRequestError error = response.getError();
+//            callback.onError(new SocialError(error.getException()));
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public boolean isLoggedIn() {
-        Session session = Session.getActiveSession();
-        return session != null && session.isOpened();
+//        Session session = Session.getActiveSession();
+//        return session != null && session.isOpened();
+        return true;
     }
 
     @Override
@@ -85,23 +80,23 @@ public class FacebookProvider implements SocialProvider {
             return;
         }
 
-        Session session = Session.getActiveSession();
-        Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
-            @Override
-            public void onCompleted(GraphUser user, Response response) {
-                if (!notifyIfError(response, callback)) {
-                    logger.debug(user.getUsername() + ":" + user.getName() + ":" + user.getFirstName()
-                            + ":" + user.getLastName() + ":" + user.getId());
-                    logger.debug(user.getProperty("email") + "");
-                    SocialMember member = new SocialMember(Long.parseLong(user.getId()), user.getName());
-                    member.setEmail(user.getProperty("email") + "");
-                    callback.onSuccess(member);
-                }
-            }
-        });
-        Bundle params = request.getParameters();
-        params.putString("fields", "email,id,name");
-        request.setParameters(params);
-        request.executeAsync();
+//        Session session = Session.getActiveSession();
+//        Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+//            @Override
+//            public void onCompleted(GraphUser user, Response response) {
+//                if (!notifyIfError(response, callback)) {
+//                    logger.debug(user.getUsername() + ":" + user.getName() + ":" + user.getFirstName()
+//                            + ":" + user.getLastName() + ":" + user.getId());
+//                    logger.debug(user.getProperty("email") + "");
+//                    SocialMember member = new SocialMember(Long.parseLong(user.getId()), user.getName());
+//                    member.setEmail(user.getProperty("email") + "");
+//                    callback.onSuccess(member);
+//                }
+//            }
+//        });
+//        Bundle params = request.getParameters();
+//        params.putString("fields", "email,id,name");
+//        request.setParameters(params);
+//        request.executeAsync();
     }
 }

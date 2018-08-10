@@ -68,7 +68,7 @@ public class LoginActivity
         hideSoftKeypad();
         socialLoginDelegate = new SocialLoginDelegate(this, savedInstanceState, this, environment.getConfig(), environment.getLoginPrefs());
 
-        activityLoginBinding.socialAuth.facebookButton.getRoot().setOnClickListener(
+        activityLoginBinding.socialAuth.facebookButton.setOnClickListener(
                 socialLoginDelegate.createSocialButtonClickHandler(
                         SocialFactory.SOCIAL_SOURCE_TYPE.TYPE_FACEBOOK));
         activityLoginBinding.socialAuth.googleButton.getRoot().setOnClickListener(
@@ -131,7 +131,7 @@ public class LoginActivity
                 if (!facebookEnabled && !googleEnabled) {
                     activityLoginBinding.panelLoginSocial.setVisibility(View.GONE);
                 } else if (!facebookEnabled) {
-                    activityLoginBinding.socialAuth.facebookButton.getRoot().setVisibility(View.GONE);
+                    activityLoginBinding.socialAuth.facebookButton.setVisibility(View.GONE);
                 } else if (!googleEnabled) {
                     activityLoginBinding.socialAuth.googleButton.getRoot().setVisibility(View.GONE);
                 }
@@ -322,7 +322,7 @@ public class LoginActivity
         }
 
 
-        activityLoginBinding.socialAuth.facebookButton.getRoot().setClickable(enable);
+        activityLoginBinding.socialAuth.facebookButton.setClickable(enable);
         activityLoginBinding.socialAuth.googleButton.getRoot().setClickable(enable);
 
         activityLoginBinding.emailEt.setEnabled(enable);

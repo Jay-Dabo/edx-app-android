@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.facebook.FacebookSdk;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.joanzapata.iconify.Iconify;
@@ -132,7 +133,7 @@ public abstract class MainApplication extends MultiDexApplication {
         boolean isOnZeroRatedNetwork = NetworkUtil.isOnZeroRatedNetwork(getApplicationContext(), config);
         if (!isOnZeroRatedNetwork
                 && config.getFacebookConfig().isEnabled()) {
-            com.facebook.Settings.setApplicationId(config.getFacebookConfig().getFacebookAppId());
+//            com.facebook.Settings.setApplicationId(config.getFacebookConfig().getFacebookAppId());
         }
 
         checkIfAppVersionUpgraded(this);
@@ -157,6 +158,9 @@ public abstract class MainApplication extends MultiDexApplication {
             Glide.get(this).register(GlideUrl.class, InputStream.class,
                     new OkHttpUrlLoader.Factory(injector.getInstance(OkHttpClientProvider.class).get()));
         }
+
+        FacebookSdk.setApplicationId(config.getFacebookConfig().getFacebookAppId());
+        FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
     private void checkIfAppVersionUpgraded(Context context) {
