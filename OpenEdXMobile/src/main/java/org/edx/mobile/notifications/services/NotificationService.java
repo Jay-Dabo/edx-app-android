@@ -21,8 +21,8 @@ import org.edx.mobile.view.SplashActivity;
 
 
 public class NotificationService extends FirebaseMessagingService {
-    public static final String NOTIFICATION_TOPIC_RELEASE = "edx_release_notification_android";
-    public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "edx_notification_channel";
+    public static final String NOTIFICATION_TOPIC_RELEASE = "release_notification_android";
+    public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default_openedx_notification_channel";
 
     private static final int NOTIFICATION_ID = 999;
     protected static final Logger logger = new Logger(NotificationService.class.getName());
