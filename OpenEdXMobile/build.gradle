@@ -28,7 +28,6 @@ edx {
 apply plugin: 'com.android.application'
 apply plugin: 'newrelic'
 apply plugin: 'com.facebook.testing.screenshot'
-apply plugin: 'com.google.gms.google-services'
 apply from: 'jacoco.gradle'
 
 class AndroidHelper {
@@ -235,6 +234,9 @@ configurations {
 def config = new TaskHelper().loadConfig(project)
 def firebase = config.get('FIREBASE')
 def firebaseEnabled = firebase?.get('ENABLED')
+if (config.get('FIREBASE_ENABLED')?: false) {
+    apply plugin: 'com.google.gms.google-services'
+}
 
 android {
     signingConfigs {
