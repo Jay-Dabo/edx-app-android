@@ -52,7 +52,6 @@ public class NotificationService extends FirebaseMessagingService {
                 remoteMessage.getNotification().getTitle(),
                 remoteMessage.getNotification().getBody()
         );
-
     }
 
     /**
